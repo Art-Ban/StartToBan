@@ -1,0 +1,8 @@
+Пример
+game.Players.PlayerAdded:Connect(function(player)
+    player.Chatted:Connect(function(message)
+        print(player.Name .. " сказал: " .. message)
+        -- Здесь вы можете добавить код для обработки сообщения
+    end)
+end)
+  
