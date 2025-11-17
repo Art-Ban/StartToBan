@@ -1,0 +1,185 @@
+Global script
+local boardM = game.Workspace["snake games"]
+local boardP = boardM:FindFirstChild("board")
+local boardCF = boardM:GetModelCFrame()  -- или просто boardPart.CFrame
+local boardPos = boardCF.Position
+local gameFC = 10
+local cellih = 2
+local basecf = boardP.CFrame * CFrame.new(11,0,11)
+local buttA = game.ReplicatedStorage:FindFirstChild("butt")
+local cellMap = {}
+local remote = game.ReplicatedStorage:WaitForChild("SnakeDirection")
+local cell
+local direction = Vector2.new(-1, 0)
+local isGameActive = false
+local snakedirect = game.ReplicatedStorage:WaitForChild("SnakeDirection")
+local korzina = {
+	
+}
+local truecifer = {
+	
+}
+local snake = {
+	{x=8, y=4},
+	{x=8, y=3},
+	{x=8, y=2}
+}
+local gridContaner = Instance.new("Folder")
+gridContaner.Name = "gridContaner"
+gridContaner.Parent = boardM
+
+for x=1, gameFC  do
+	cellMap[x] = {}
+    
+	for y=1, gameFC do
+		
+		local cell = Instance.new("Part")
+		cell.Name = "green"
+		cell.Parent = gridContaner
+		cell.CFrame = basecf * CFrame.new(-2*x,0, -2*y)
+		cell.Anchored = true
+		cell.Size = Vector3.new(2,0.2,2)
+		cell.Material = Enum.Material.Grass
+		cell.Color = Color3.fromRGB(56, 204, 66)
+		cellMap[x][y] = cell
+		table.insert(truecifer, {X=x, Y=y})
+		
+		
+		for i, segment in pairs(snake) do	
+		
+				
+			
+			local x = segment.x
+			local y = segment.y
+			local cell = cellMap[x] and cellMap[x][y]
+			if cell  then
+				cell.BrickColor = BrickColor.new("Royal purple")
+				cell.Material = Enum.Material.Rubber
+				
+			end
+		end
+	end
+end
+ 
+
+remote.OnServerEvent:Connect(function()
+	
+end)
+ 
+ local function updateGame()
+	for x =1 , gameFC do
+		for y =1, gameFC do
+			cellMap[x][y].Color = Color3.fromRGB(56, 204, 66)
+			cellMap[x][y].Material = Enum.Material.Grass
+		end
+	end
+	for _, seg in pairs(snake) do
+		local x = seg.x -- дебил икс иксом назвал
+		local y = seg.y -- дебил игрик игриком назвал
+		local cell = cellMap[x] and cellMap[x][y]
+		if cell then
+			cell.BrickColor = BrickColor.new("Royal purple")
+			cell.Material = Enum.Material.Rubber
+		end
+	end
+ end
+ 
+local function apples_green()
+for _, seg in pairs(truecifer) do
+	print ("nigga")
+end
+	
+
+
+ end
+local function snakemov()
+local head = snake[1]
+local newhead = {
+	x = head.x + direction.X,
+	y = head.y + direction.Y
+	
+}
+table.insert(snake,1,newhead)
+table.remove(snake)
+end
+
+remote.OnServerEvent:Connect(function(player, direction2)
+	
+	direction = direction2
+	
+end)
+
+
+
+for x=1, 30 do
+snakemov()
+updateGame()
+wait(1)
+end
+
+
+
+	LOCAL SCRIPT
+local userInput = game:GetService("UserInputService")
+local remote = game.ReplicatedStorage:WaitForChild("SnakeDirection")
+local playeractive = false
+local snakedirect = game.ReplicatedStorage:WaitForChild("SnakeDirection")
+local isGameActive = false
+local boardM = game.Workspace["snake games"]
+local boardCF = boardM:GetModelCFrame()  -- или просто boardPart.CFrame
+local sGui = script.Parent
+local uis = game:GetService("UserInputService")
+local function direct()
+	local direction2
+	uis.InputBegan:Connect(function(input,gameProcessed )-- инпут есть нажатие, геймпроцесев это проверка нажимается ли GUI элемент
+		if gameProcessed then return end
+		if input.KeyCode == Enum.KeyCode.W then
+			direction2 = Vector2.new(1,0)
+		elseif input.KeyCode == Enum.KeyCode.A then
+			direction2 = Vector2.new(0,-1)
+		elseif input.KeyCode == Enum.KeyCode.S then
+			direction2 = Vector2.new(-1,0)
+		elseif input.KeyCode == Enum.KeyCode.D then
+			direction2 = Vector2.new(0,1)
+		end
+		
+		remote:FireServer(direction2)
+		print(direction2)
+	end)
+end
+
+
+local butt = Instance.new("Part")
+butt.Size = Vector3.new(4,1,8)
+butt.Transparency = 1
+butt.Parent = boardM
+butt.CFrame = boardCF * CFrame.new(0,0.2,0)
+butt.Anchored = true
+butt.CanCollide = false
+-- mb есть проблемы с кликаньем через парт... но нам это не важно
+local Guip = Instance.new("SurfaceGui")
+Guip.Name = "Guip"
+Guip.Parent = sGui
+Guip.Adornee = butt
+Guip.Face = Enum.NormalId.Top
+local BB = Instance.new("TextButton")
+BB.Size = UDim2.new(1,0,1,0)
+BB.Parent = Guip
+BB.Text = "Play"
+BB.TextScaled = true
+BB.BackgroundColor3 = Color3.fromRGB(49, 121, 255)
+BB.Name = "BB"
+BB.MouseButton1Click:Connect(function(player)
+ local im = game.Players.LocalPlayer
+ BB.Visible = false
+	direct()
+ 
+end)
+
+
+
+
+
+
+-- z отвечает за движение вправо
+-- x отчечает за движение вверх
